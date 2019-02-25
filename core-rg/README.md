@@ -1,17 +1,17 @@
-'Arm templates folder'
+'Arm templates folder'  
 All our arm templates for creating components. 
 For every component we have a seperate infrastructure and key vault arm template. 
 
-'environments folder'
+'environments folder'  
 For every possible resource group and all the azure services within we are using a seperate json file. It contains all relevant parameter which will be used in our script. 
 
-'Create-Infrastructure.ps1'
+'Create-Infrastructure.ps1'  
 Root script for creating our infrastructure in Azure. It loads all files which it needs (arm templates, json environment file and powershell commands).
 
-'Common-Functions.ps1'
+'Common-Functions.ps1'  
 Script with common functions which are used in our Create-Infrastructure.ps1 script. 
 
-'Create-Env-Variables.ps1'
+'Create-Env-Variables.ps1'  
 Script for setting all relevant environment variables in CloudFoundry for our app.
 For setting variables we need to logins, one in Azure and the other one in CloudFoundry.
 - You can find the login statement for azure inside of the the script.
