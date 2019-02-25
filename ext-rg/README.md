@@ -18,4 +18,4 @@ When we deploy our web app arm template everything gets preconfigured, applicati
 What is still missing concerning the auth settings is the 'Reply Url' which we have to define in the Azure AD for the service principal. 
 There we have to add the new url for the right callback of the AD.
 
-So don't forget after deploying the app in a new resource group to add the url  'https://CompanyTag-LocationTag-EnvironmentTag-ProjectTag-s-ComponentTag.azurewebsites.net/.auth/login/aad/callback' in Azure AD -> App Registration -> <<ServicePrincipalName>> -> Settings -> Reply Urls!
+So don't forget after deploying the app in a new resource group to add the url  'https://'CompanyTag'-'LocationTag'-'EnvironmentTag'-'ProjectTag'-'s'-'ComponentTag'.azurewebsites.net/.auth/login/aad/callback' in Azure AD -> App Registration -> 'ServicePrincipalName' -> Settings -> Reply Urls!
