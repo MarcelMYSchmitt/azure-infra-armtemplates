@@ -1,0 +1,91 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "CompanyTag": {
+      "type": "string"
+    },
+    "EnvironmentTag": {
+      "type": "string"
+    },
+    "LocationTag": {
+      "type": "string"
+    },
+    "ProjectTag": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "keyVaultApiVersion": "2016-10-01",
+    "keyVaultName": "[concat(parameters('CompanyTag'), '-', parameters('LocationTag'), '-', parameters('EnvironmentTag'), '-', parameters('ProjectTag'), '-vt')]",
+    "iotHubOwnerConnectionStringKeyName": "iotHubOwnerConnectionString",
+    "iotHubName": "[concat(parameters('CompanyTag'), '-', parameters('LocationTag'), '-', parameters('EnvironmentTag'), '-', parameters('ProjectTag'),'-iothub')]",
+    "iotHubServiceConnectionStringKeyName": "iotHubServiceConnectionString",
+    "iotHubSasServicePrimaryKeyName": "iotHubSasServicePrimaryKey",
+    "iotHubEndpointConnectionStringKeyName": "iotHubEndpointConnectionString"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "[variables('keyVaultApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('keyVaultName'), '/', variables('iotHubOwnerConnectionStringKeyName'))]",
+      "tags": {
+        "displayName": "IotHub manage connection string secret entry in key vault",
+        "owner": "<<TeamName>>"
+      },
+      "properties": {
+        "value": "[concat('HostName=', variables('iotHubName'), '.azure-devices-provisioning.net;SharedAccessKeyName=iothubowner;SharedAccessKey=', listKeys(resourceId('Microsoft.Devices/IotHubs', variables('iotHubName')), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).value[0].primaryKey)]"
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "[variables('keyVaultApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('keyVaultName'), '/', variables('iotHubServiceConnectionStringKeyName'))]",
+      "tags": {
+        "displayName": "IotHub service connection string secret entry in key vault",
+        "owner": "<<TeamName>>"
+      },
+      "properties": {
+        "value": "[concat('HostName=', variables('iotHubName'), '.azure-devices.net;SharedAccessKeyName=service;SharedAccessKey=', listKeys(resourceId('Microsoft.Devices/IotHubs', variables('iotHubName')), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).value[1].primaryKey)]"
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "[variables('keyVaultApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('keyVaultName'), '/', variables('iotHubSasServicePrimaryKeyName'))]",
+      "tags": {
+        "displayName": "IotHub service connection string secret entry in key vault",
+        "owner": "<<TeamName>>"
+      },
+      "properties": {
+        "value": "[listKeys(resourceId('Microsoft.Devices/IotHubs', variables('iotHubName')), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).value[1].primaryKey]"
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "[variables('keyVaultApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('keyVaultName'), '/', variables('iotHubEndpointConnectionStringKeyName'))]",
+      "tags": {
+        "displayName": "IotHub service connection string secret entry in key vault",
+        "owner": "<<TeamName>>"
+      },
+      "properties": {
+        "value": "[concat('Endpoint=', reference(resourceId('Microsoft.Devices/IoTHubs', variables('IotHubName')), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).eventHubEndpoints.events.endpoint, ';SharedAccessKeyName=iothubowner;SharedAccessKey=', listKeys(resourceId('Microsoft.Devices/IotHubs', variables('IotHubName')), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).value[0].primaryKey, ';EntityPath=', reference(resourceId('Microsoft.Devices/IoTHubs', variables('IotHubName')), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).eventHubEndpoints.events.path)]"
+      },
+      "dependsOn": []
+    }
+  ]
+}
+
+
+
+
+
+

@@ -1,0 +1,77 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "CompanyTag": {
+      "type": "string"
+    },
+    "EnvironmentTag": {
+      "type": "string"
+    },
+    "LocationTag": {
+      "type": "string"
+    },
+    "ProjectTag": {
+      "type": "string"
+    },
+    "ServiceBusQueueName": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "keyVaultApiVersion": "2016-10-01",
+    "serviceBusApiVersion": "2015-08-01",
+    "defaultSASKeyName": "RootManageSharedAccessKey",
+    "keyVaultName": "[concat(parameters('CompanyTag'), '-', parameters('LocationTag'), '-', parameters('EnvironmentTag'), '-', parameters('ProjectTag'), '-vt')]",
+    "serviceBusQueueManageConnectionStringName": "serviceBusQueueManageConnectionString",
+    "serviceBusQueueListenConnectionStringName": "serviceBusQueueListenConnectionString",
+    "serviceBusQueueSendConnectionStringName": "serviceBusQueueSendConnectionString",
+    "sendRuleName": "SendRule",
+    "listenRuleName": "ListenRule",
+    "serviceBusNameSpace": "[concat(parameters('Tag'), '-', parameters('LocationTag'), '-', parameters('EnvironmentTag'), '-', parameters('ProjectTag'), '-sbns')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "[variables('keyVaultApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('keyVaultName'), '/', variables('serviceBusQueueListenConnectionStringName'))]",
+      "tags": {
+        "displayName": "Service Bus Queue list connection string secret entry in key vault",
+        "owner": "<<TeamName>>"
+      },
+      "properties": {
+        "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/queues/authorizationRules', variables('serviceBusNameSpace'), parameters('ServiceBusQueueName'), variables('listenRuleName')), variables('serviceBusApiVersion')).primaryConnectionString]"
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "[variables('keyVaultApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('keyVaultName'), '/', variables('serviceBusQueueSendConnectionStringName'))]",
+      "tags": {
+        "displayName": "Service Bus Queue send connection string secret entry in key vault",
+        "owner": "<<TeamName>>"
+      },
+      "properties": {
+        "value": "[listKeys(resourceId('Microsoft.ServiceBus/namespaces/queues/authorizationRules', variables('serviceBusNameSpace'), parameters('ServiceBusQueueName'), variables('sendRuleName')), variables('serviceBusApiVersion')).primaryConnectionString]"
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "[variables('keyVaultApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('keyVaultName'), '/', variables('serviceBusQueueManageConnectionStringName'))]",
+      "tags": {
+        "displayName": "Service Bus Queue send connection string secret entry in key vault",
+        "owner": "<<TeamName>>"
+      },
+      "properties": {
+        "value": "[listkeys(resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNameSpace'), variables('defaultSASKeyName')), variables('serviceBusApiVersion')).primaryConnectionString]"
+      },
+      "dependsOn": []
+    }
+  ]
+}

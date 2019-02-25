@@ -1,0 +1,43 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "CompanyTag": {
+        "type": "string"
+      },
+      "EnvironmentTag": {
+        "type": "string"
+      },
+      "LocationTag": {
+        "type": "string"
+      },
+      "ProjectTag": {
+        "type": "string"
+      },
+      "DeviceProvisioningFunctionsKey": {
+        "type": "string"
+      }
+    },
+    "variables": {
+      "keyVaultApiVersion": "2016-10-01",
+      "keyVaultName": "[concat(parameters('CompanyTag'), '-', parameters('LocationTag'), '-', parameters('EnvironmentTag'), '-', parameters('ProjectTag'), '-vt')]",
+      "deviceProvisioningFunctionsKeyName": "deviceProvisioningFunctionsKey"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "[variables('keyVaultApiVersion')]",
+            "location": "[resourceGroup().location]",
+            "name": "[concat(variables('keyVaultName'), '/', variables('deviceProvisioningFunctionsKeyName'))]",
+            "tags": {
+              "displayName": "Functions Master Key secret entry in key vault",
+              "owner": "<<TeamName>>"
+            },
+            "properties": {
+              "value": "[parameters('DeviceProvisioningFunctionsKey')]"
+            },
+            "dependsOn": []
+          }
+    ]
+  }
+

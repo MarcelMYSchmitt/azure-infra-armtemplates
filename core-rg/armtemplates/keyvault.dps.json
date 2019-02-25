@@ -1,0 +1,60 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "CompanyTag": {
+      "type": "string"
+    },
+    "EnvironmentTag": {
+      "type": "string"
+    },
+    "LocationTag": {
+      "type": "string"
+    },
+    "DpsScopeId": {
+      "type": "string"
+    },
+    "ProjectTag": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "keyVaultApiVersion": "2016-10-01",
+    "keyVaultName": "[concat(parameters('CompanyTag'), '-', parameters('LocationTag'), '-', parameters('EnvironmentTag'), '-', parameters('ProjectTag'), '-vt')]",
+    "dpsScopeIdKeyName": "dpsScopeIdString",
+    "dpsManageConnectionStringKeyName": "dpsManageConnectionString",
+    "dpsName": "[concat(parameters('CompanyTag'), '-', parameters('LocationTag'), '-', parameters('EnvironmentTag'), '-', parameters('ProjectTag'), '-dps')]",
+    "dpsStorageStringKeyName": "dpsStorageConnectionString",
+    "dpsStorageName": "[concat(parameters('CompanyTag'), parameters('LocationTag'), parameters('EnvironmentTag'), parameters('ProjectTag'),'dpsstor')]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "[variables('keyVaultApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('keyVaultName'), '/', variables('dpsManageConnectionStringKeyName'))]",
+      "tags": {
+        "displayName": "DPS manage connection string secret entry in key vault",
+        "owner": "<<TeamName>>"
+      },
+      "properties": {
+        "value": "[concat('HostName=', variables('dpsName'), '.azure-devices-provisioning.net;SharedAccessKeyName=provisioningserviceowner;SharedAccessKey=', listKeys(resourceId('Microsoft.Devices/provisioningServices', variables('dpsName')), providers('Microsoft.Devices', 'provisioningServices').apiVersions[0]).value[0].primaryKey)]"
+      },
+      "dependsOn": []
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "[variables('keyVaultApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('keyVaultName'), '/', variables('dpsScopeIdKeyName'))]",
+      "tags": {
+        "displayName": "DPS ScopeId secret entry in key vault",
+        "owner": "<<TeamName>>"
+      },
+      "properties": {
+        "value": "[parameters('DpsScopeId')]"
+      },
+      "dependsOn": []
+    }
+  ]
+}

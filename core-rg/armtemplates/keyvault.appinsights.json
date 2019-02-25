@@ -1,0 +1,41 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "CompanyTag": {
+      "type": "string"
+    },
+    "EnvironmentTag": {
+      "type": "string"
+    },
+    "LocationTag": {
+      "type": "string"
+    },
+    "ProjectTag": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "keyVaultApiVersion": "2016-10-01",
+    "appInsightsApiVersion": "2015-05-01",
+    "keyVaultName": "[concat(parameters('CompanyTag'), '-', parameters('LocationTag'), '-', parameters('EnvironmentTag'), '-', parameters('ProjectTag'),'-vt')]",
+    "appInsightsName": "[concat(parameters('CompanyTag'), '-', parameters('LocationTag'), '-', parameters('EnvironmentTag'), '-', parameters('ProjectTag'),'-insights')]",
+    "appInsightsInstrumentationKeyName": "appInsightsInstrumentationKey"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "[variables('keyVaultApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('keyVaultName'), '/', variables('appInsightsInstrumentationKeyName'))]",
+      "tags": {
+        "displayName": "Application Instrumentation Key secret entry in key vault",
+        "owner": "<<TeamName>>"
+      },
+      "properties": {
+        "value": "[reference(resourceId('Microsoft.Insights/components', variables('appInsightsName')), variables('appInsightsApiVersion')).InstrumentationKey]"
+      },
+      "dependsOn": []
+    }
+  ]
+}

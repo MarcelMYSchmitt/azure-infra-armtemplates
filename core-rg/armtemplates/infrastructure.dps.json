@@ -1,0 +1,59 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "IotHubName": {
+            "type": "string"
+        },
+        "ProvisioningServiceName": {
+            "type": "string"
+        },
+        "IotHubOwnerConnectionString": {
+            "type": "string"
+        },
+        "HubLocation": {
+            "type": "string",
+            "allowedValues": [
+                "eastus",
+                "westus",
+                "westeurope",
+                "northeurope",
+                "southeastasia",
+                "eastasia"
+            ]
+        }
+    },
+    "variables": {        
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Devices/provisioningServices",
+            "sku": {
+                "name": "S1",
+                "capacity": 1
+            },
+            "name": "[parameters('ProvisioningServiceName')]",
+            "apiVersion": "2017-11-15",
+            "location": "[parameters('HubLocation')]",
+            "tags": {
+                "displayName":"DPS"
+            },
+            "properties": {
+                "iotHubs": [
+                    {
+                        "connectionString": "[concat('HostName=', reference(resourceId('Microsoft.Devices/IoTHubs', parameters('IotHubName')), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).hostName, ';SharedAccessKeyName=iothubowner;SharedAccessKey=', listKeys(resourceId('Microsoft.Devices/IotHubs', parameters('IotHubName')), providers('Microsoft.Devices', 'IoTHubs').apiVersions[0]).value[0].primaryKey)]",
+                        "location": "[parameters('HubLocation')]",
+                        "name": "[concat(parameters('IotHubName'),'.azure-devices.net')]"
+                    }
+                ]
+            },
+            "dependsOn": []
+        }
+    ],
+    "outputs": {
+        "ProvisioningServiceName": {
+            "type": "string",
+            "value": "[parameters('ProvisioningServiceName')]"
+          }
+    }
+}

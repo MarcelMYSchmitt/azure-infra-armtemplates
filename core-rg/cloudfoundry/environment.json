@@ -1,0 +1,13 @@
+{
+    "CompanyTag":"<<CompanyTag>>",
+    "EnvironmentTag":"<<EnvironmentTag>>",
+    "LocationTag":"<<LocationTag>>",
+    "ProjectTag":"<<ProjectTag>>",
+    "ComponentTag":"<<ComponentTag>>",
+    "ServicePrincipalName":"<<ServicePrincipalName>>",
+    "ClientId":"<ClientId>>",
+    "DirectoryId":"<<DirectoryId>>",
+    "SubscriptionId":"<<SubscriptionId>>",
+    "CfAppname":"<<CfAppname>>",
+    "LogEventLevel":"<<LogEventLevel>>"
+}

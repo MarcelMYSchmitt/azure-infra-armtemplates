@@ -1,0 +1,92 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "ServiceBusNamespaceName": {
+        "type": "string",
+        "metadata": {
+          "description": "Name of the Service Bus namespace"
+        }
+      },
+      "ServiceBusQueueName": {
+        "type": "string",
+        "metadata": {
+          "description": "Name of the Queue"
+        }
+      }
+    },
+    "variables": {
+      "defaultSASKeyName": "RootManageSharedAccessKey",
+      "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('ServiceBusNamespaceName'), variables('defaultSASKeyName'))]",
+      "sbVersion": "2017-04-01"
+    },
+    "resources": [
+      {
+        "apiVersion": "2017-04-01",
+        "name": "[parameters('ServiceBusNamespaceName')]",
+        "type": "Microsoft.ServiceBus/Namespaces",
+        "location": "[resourceGroup().location]",
+        "sku": {
+          "name": "Standard"
+        },
+        "properties": {},
+        "resources": [
+          {
+            "apiVersion": "2017-04-01",
+            "name": "[parameters('ServiceBusQueueName')]",
+            "type": "Queues",
+            "dependsOn": [
+              "[concat('Microsoft.ServiceBus/namespaces/', parameters('ServiceBusNamespaceName'))]"
+            ],
+            "properties": {
+              "maxSizeInMegabytes": 1024,
+              "lockDuration": "PT30S",
+              "requiresDuplicateDetection": false,
+              "requiresSession": "false",
+              "defaultMessageTimeToLive": "PT14M",
+              "deadLetteringOnMessageExpiration": "false",
+              "duplicateDetectionHistoryTimeWindow": "PT10M",
+              "maxDeliveryCount": "10",
+              "autoDeleteOnIdle": "PT14M",
+              "enablePartitioning": "false",
+              "enableExpress": "false"
+            },
+            "resources": [
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "ListenRule",
+                    "type": "authorizationRules",
+                    "dependsOn": [
+                        "[parameters('ServiceBusQueueName')]"
+                    ],
+                    "properties": {
+                        "Rights": ["Listen"]
+                    }
+                },
+                {
+                    "apiVersion": "[variables('sbVersion')]",
+                    "name": "SendRule",
+                    "type": "authorizationRules",
+                    "dependsOn": [ 
+                        "[parameters('ServiceBusQueueName')]" 
+                    ],
+                    "properties": {
+                      "Rights": [ "Send" ]
+                    }
+                }
+            ]
+          }
+        ]
+      }
+    ],
+    "outputs": {
+      "NamespaceConnectionString": {
+        "type": "string",
+        "value": "[listkeys(variables('authRuleResourceId'), variables('sbVersion')).primaryConnectionString]"
+      },
+      "SharedAccessPolicyPrimaryKey": {
+        "type": "string",
+        "value": "[listkeys(variables('authRuleResourceId'), variables('sbVersion')).primaryKey]"
+      }
+    }
+  }

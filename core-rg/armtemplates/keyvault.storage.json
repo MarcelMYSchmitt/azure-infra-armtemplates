@@ -1,0 +1,40 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "CompanyTag": {
+      "type": "string"
+    },
+    "EnvironmentTag": {
+      "type": "string"
+    },
+    "LocationTag": {
+      "type": "string"
+    },
+    "ProjectTag": {
+      "type": "string"
+    }
+  },
+  "variables": {
+    "keyVaultApiVersion": "2016-10-01",
+    "keyVaultName": "[concat(parameters('CompanyTag'), '-', parameters('LocationTag'), '-', parameters('EnvironmentTag'), '-', parameters('ProjectTag'), '-vt')]",
+    "storageConnectionStringName": "storageConnectionString",
+    "storageName": "[concat(parameters('CompanyTag'), parameters('LocationTag'), parameters('EnvironmentTag'), parameters('ProjectTag'),'stor')]"
+  },
+  "resources": [
+     {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "apiVersion": "[variables('keyVaultApiVersion')]",
+      "location": "[resourceGroup().location]",
+      "name": "[concat(variables('keyVaultName'), '/', variables('storageConnectionStringName'))]",
+      "tags": {
+        "displayName": "Storage connection string secret entry in key vault",
+        "owner": "<<TeamName>>"
+      },
+      "properties": {
+        "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('storageName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value, ';EndpointSuffix=core.windows.net')]"
+      },
+      "dependsOn": []
+    }
+  ]
+}
