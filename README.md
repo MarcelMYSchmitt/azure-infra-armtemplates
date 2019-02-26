@@ -35,30 +35,18 @@ By using this certificate you do not have to login everytime into  azure. Beside
 - Change parameters in 'core-rg/environments/ct-lt-et-pt.json' to your naming convention above, add the missing variables like ClientId and ClientSecret (which you get from azure ad for example). Rename the file to 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag.json'. For every environment stage, location area or project you will have another json-file. 
 - Execute 'core-rg/Create-Infrastructure.ps1' with parameters -FileName 'FileName' -ClientSecret 'ClientSecret' -HasThrumbPrint 'anystring'  
   Just set 'HasThumbPrint' if you have the certificate on your PC or on your build agent. Otherwise do not set it and use the manual Login by Azure.
-- Change parameters in 'ext-rg/environments/ct-lt-et-pt.json' to your naming convention above, add the missing variables like ClientId and ClientSecret (which you get from azure ad for example). Rename the file to 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag.json'. For every environment stage, location area or project you will have another json-file. 
-- Execute 'ext-rg/Create-Infrastructure.ps1' with parameters -FileName 'FileName'  -HasThrumbPrint 'anystring'  
+- Change parameters in 'ext-rg/environments/ct-lt-et-pt.json' to your naming convention above, add the missing variables. Rename the file to 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag.json'. For every environment stage, location area or project you will have another json-file. 
+- Execute 'ext-rg/Create-Infrastructure.ps1' with parameters -FileName 'FileName' -HasThrumbPrint 'anystring'  
   Just set 'HasThumbPrint' if you have the certificate on your PC or on your build agent. Otherwise do not set it and use the manual Login by Azure.
+- All services will be created.
 
 
+Setting environment variables in Cloud Foundry:  
+Let's say we have an application hosted in cloud foundry which also uses our azure services. There we do not want to have a connection to our key vault for receiving connection strings or other secrets. So we decide to use environment variables there. To solve this issue we have a seperate script for reading secrets from our key vault and setting the specific environment variables in cloud foundry. Concerning the handling it's the same like for the other scripts.
 
-In all arm templates such as the powershell script there is no hard coded stuff. All things which can be changed anytime (as far and as long as we want) are declared in a separate environment json-file.  
-General naming convention: 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag.json'  
-The file gets loaded at the beginning of the script, if we want to change the loaded script we can pass the name as argument in the concerning build server or locally. 
+-> for executing the script we need three arguments: FileName, CfCliPath, HasThumbPrint
 
-
-
-
-Setting environment variables in Cloud Foundry:
-There is a seperate script for reading secrets from our key vault and setting the environment variables in Cloud Foundry. Concerning the handling it's the same like for the other scripts.
-
--> for environment variables we need three arguments: FileName, CfCliPath, HasThumbPrint
-
-'HasThumbPrint' is just a parameter we set in our build server, we do not use it locally. All the parameters are also stored in specific json-files.
-The CfCliPath is needed to point to the cf installation folder (which can dffer on every agent we have on our build server). 
-
-
-
-
+'HasThumbPrint' is just a parameter we set in our build server, we do not use it locally. All the parameters are also stored in specific json-files. The CfCliPath is needed to point to the cf installation folder (which can dffer on every agent we have on our build server). 
 
 
 For more information go into the subfolder, there you can find more README files. 
