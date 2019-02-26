@@ -32,7 +32,12 @@ How to use:
 - Add the new service principal as contributor to your resource groups.
 - Use 'createAndApplyServicePrincipalCertificate.ps1' to create a certificate.   
 By using this certificate you do not have to login everytime into  azure. Besides you can use it on your build server.
-- Change parameters in 'environments/ct-lt-et-pt.json' to your naming convention above, add the missing variables like ClientId and ClientSecret (which you get from azure ad for example). Rename the file to 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag.json'. For every environment stage, location area or project you will have another json-file. 
+- Change parameters in 'core-rg/environments/ct-lt-et-pt.json' to your naming convention above, add the missing variables like ClientId and ClientSecret (which you get from azure ad for example). Rename the file to 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag.json'. For every environment stage, location area or project you will have another json-file. 
+- Execute 'core-rg/Create-Infrastructure.ps1' with parameters -FileName 'FileName' -ClientSecret 'ClientSecret' -HasThrumbPrint 'anystring'  
+  Just set 'HasThumbPrint' if you have the certificate on your PC or on your build agent. Otherwise do not set it and use the manual Login by Azure.
+- Change parameters in 'ext-rg/environments/ct-lt-et-pt.json' to your naming convention above, add the missing variables like ClientId and ClientSecret (which you get from azure ad for example). Rename the file to 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag.json'. For every environment stage, location area or project you will have another json-file. 
+- Execute 'ext-rg/Create-Infrastructure.ps1' with parameters -FileName 'FileName'  -HasThrumbPrint 'anystring'  
+  Just set 'HasThumbPrint' if you have the certificate on your PC or on your build agent. Otherwise do not set it and use the manual Login by Azure.
 
 
 
