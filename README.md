@@ -1,6 +1,7 @@
-General:
+General:  
 We are going to create two resource groups with different azure services which belong together. One use case could be to have core services in the first resource group and extra services (like for testing) in the second one.
-
+  
+  
 First resource group we will have following services:  
 - DPS
 - IotHub
@@ -10,25 +11,27 @@ First resource group we will have following services:
 - Container Registry
 - Storage Account
 - Application Insights
-
+  
+  
 Second resource group we will have following services: 
 - Key Vault
 - Web App Container (with App Service Plan)
 - Application Insights
-
-
-Why two resource groups at all?
-As long as we are going to use Azure Functions with a Windows Service Plan, we cannot deploy our web app container with linux in the same resource group. That's not possible. For more informations go to: https://docs.microsoft.com/de-de/azure/app-service/containers/app-service-linux-intro#limitations
+  
+  
+Why two resource groups at all?  
+As long as we are going to use Azure Functions with a Windows Service Plan, we cannot deploy our web app container with linux in the same resource group. For more informations go to: https://docs.microsoft.com/de-de/azure/app-service/containers/app-service-linux-intro#limitations
 
 
 How to use:
-- Create both resource groups manually.
-  Use following naming convention: 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag-rg' and 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag-s-rg'
-  By having this we are independent from fixed naming conventions.
+- Create both resource groups manually.  
+  Use following naming convention: 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag-rg' and 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag-s-rg'  
+  By having this we are independent from fixed naming conventions.  
   The 's' in the second resource group says that it's the second one belonging to the first one. 
 - Create service principal in youre azure ad and create a key. We use the key later in our infrastructure script. 
 - Add the new service principal as contributor to your resource groups.
-- Use 'createAndApplyServicePrincipalCertificate.ps1' to create a certificate. By using this certificate you do not have to login everytime into  azure. Besides you can use it on your build server.
+- Use 'createAndApplyServicePrincipalCertificate.ps1' to create a certificate.   
+By using this certificate you do not have to login everytime into  azure. Besides you can use it on your build server.
 - Change parameters in 'environments/ct-lt-et-pt.json' to your naming convention above, add the missing variables like ClientId and ClientSecret (which you get from azure ad for example). Rename the file to 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag.json'. For every environment stage, location area or project you will have another json-file. 
 
 
