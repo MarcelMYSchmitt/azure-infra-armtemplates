@@ -23,7 +23,7 @@ Why two resource groups at all?
 As long as we are going to use Azure Functions with a Windows Service Plan, we cannot deploy our web app container with linux in the same resource group. For more informations go to: https://docs.microsoft.com/de-de/azure/app-service/containers/app-service-linux-intro#limitations
 
 
-##How to use:
+## How to use:
 - Create both resource groups manually.  
   Use following naming convention: 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag-rg' and 'CompanyTag-LocationTag-EnvironmentTag-ProjectTag-s-rg'  
   By having this we are independent from fixed naming conventions.  
@@ -41,7 +41,7 @@ By using this certificate you do not have to login everytime into  azure. Beside
 - All services will be created.
 
 
-##Setting environment variables in Cloud Foundry:  
+## Setting environment variables in Cloud Foundry:  
 Let's say we have an application hosted in cloud foundry which also uses our azure services. There we do not want to have a connection to our key vault for receiving connection strings or other secrets. So we decide to use environment variables there. To solve this issue we have a seperate script for reading secrets from our key vault and setting the specific environment variables in cloud foundry. Concerning the handling it's the same like for the other scripts.
 
 -> for executing the script we need three arguments: FileName, CfCliPath, HasThumbPrint
